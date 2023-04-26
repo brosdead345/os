@@ -1,0 +1,37 @@
+from typing import List
+from collections import defaultdict
+
+def pageFaults(n: int, c: int, pages: List[int]) -> int:
+	count = 0
+	v = []
+	mp = defaultdict(int)
+
+	for i in range(n):
+		if pages[i] not in v:
+			if len(v) == c:
+				mp[v[0]] -= 1
+				v.pop(0)
+
+			v.append(pages[i])
+			mp[pages[i]] += 1
+
+			count += 1
+		else:
+			mp[pages[i]] += 1
+			v.remove(pages[i])
+			v.append(pages[i])
+
+		k = len(v) - 2
+
+		while k >= 0 and mp[v[k]] > mp[v[k+1]]:
+			v[k], v[k+1] = v[k+1], v[k]
+			k -= 1
+
+	return count
+
+if _name_ == '_main_':
+	pages = [1, 2, 3, 4, 2, 1, 5]
+	n, c = 7, 3
+
+	print("Page Faults = ", pageFaults(n, c, pages))
+	print("Page Hits = ", n - pageFaults(n, c, pages))
